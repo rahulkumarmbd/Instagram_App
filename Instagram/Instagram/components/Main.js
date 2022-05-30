@@ -1,0 +1,61 @@
+import { useEffect } from "react";
+import { Text, View } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { Fetch_Current_User } from "../redux/Auth/Actions";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+import { Feed } from "./Main/Feed";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { Add } from "./Main/Add";
+import { Profile } from "./Main/Profile";
+
+const Tab = createMaterialBottomTabNavigator();
+
+export const Main = ({ userId }) => {
+  const dispatch = useDispatch();
+  const { CurrentUser } = useSelector((store) => store.Auth);
+
+  console.log(CurrentUser);
+
+  useEffect(() => {
+    dispatch(Fetch_Current_User(userId));
+  }, []);
+
+  if (!CurrentUser)
+    return (
+      <View>
+        <Text>Loading....</Text>
+      </View>
+    );
+
+  return (
+    <Tab.Navigator initialRouteName="Feed" labeled={true}>
+      <Tab.Screen
+        name="Feed"
+        component={Feed}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Add"
+        component={Add}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="plus-box" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account-circle" color={color} size={26} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};

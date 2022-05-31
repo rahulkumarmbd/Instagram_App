@@ -12,6 +12,9 @@ import { db } from "./firebase/config";
 import { Main } from "./components/Main";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./redux/store";
+import "react-native-gesture-handler";
+import { SafeAreaViewHelper } from "./components/utils/SafeAreaViewHelper";
+import { Save } from "./components/Main/Save";
 
 // LogBox.ignoreLogs([
 //   "AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. See https://github.com/react-native-async-storage/async-storage",
@@ -26,7 +29,7 @@ const initStatus = {
   loggedIn: false,
 };
 
-export default function App() {
+export default function App({ navigation }) {
   const [{ lodding, loggedIn }, setStatus] = useState(initStatus);
   const [userId, setUserId] = useState();
   const auth = getAuth();
@@ -35,6 +38,7 @@ export default function App() {
     onAuthStateChanged(
       auth,
       (user) => {
+        // console.log("user",user);
         if (!user) {
           return setStatus({
             lodding: false,
@@ -42,6 +46,7 @@ export default function App() {
           });
         }
         setUserId(user.uid);
+        // console.log("fun",user.uid);
         return setStatus({
           lodding: false,
           loggedIn: true,
@@ -55,9 +60,11 @@ export default function App() {
 
   if (lodding) {
     return (
-      <View>
-        <Text>Lodding....</Text>
-      </View>
+      <SafeAreaView style={SafeAreaViewHelper.AndroidSafeArea}>
+        <View>
+          <Text>Lodding....</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
@@ -77,6 +84,8 @@ export default function App() {
     );
   }
 
+  console.log("userid", userId);
+
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -85,7 +94,9 @@ export default function App() {
             name="MainScreen"
             component={() => <Main userId={userId} />}
             options={{ headerShown: false }}
+            navigation={navigation}
           />
+          <stack.Screen name="Save" component={Save} navigation={navigation} />
         </stack.Navigator>
       </NavigationContainer>
     </Provider>

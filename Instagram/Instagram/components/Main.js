@@ -1,30 +1,34 @@
 import { useEffect } from "react";
-import { Text, View } from "react-native";
+import { Text, View, SafeAreaView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Fetch_Current_User } from "../redux/Auth/Actions";
+import { Fetch_Current_User, Fetch_Current_User_Posts } from "../redux/Actions";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Feed } from "./Main/Feed";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Add } from "./Main/Add";
 import { Profile } from "./Main/Profile";
+import { SafeAreaViewHelper } from "./utils/SafeAreaViewHelper";
 
 const Tab = createMaterialBottomTabNavigator();
 
 export const Main = ({ userId }) => {
   const dispatch = useDispatch();
-  const { CurrentUser } = useSelector((store) => store.Auth);
+  const CurrentUser = useSelector((store) => store.CurrentUser);
 
-  console.log(CurrentUser);
+  // console.log("CurrentUser", CurrentUser);
 
   useEffect(() => {
     dispatch(Fetch_Current_User(userId));
+    dispatch(Fetch_Current_User_Posts(userId));
   }, []);
 
   if (!CurrentUser)
     return (
-      <View>
-        <Text>Loading....</Text>
-      </View>
+      <SafeAreaView style={SafeAreaViewHelper.AndroidSafeArea}>
+        <View>
+          <Text>Loading....</Text>
+        </View>
+      </SafeAreaView>
     );
 
   return (
@@ -52,7 +56,11 @@ export const Main = ({ userId }) => {
         component={Profile}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-circle" color={color} size={26} />
+            <MaterialCommunityIcons
+              name="account-circle"
+              color={color}
+              size={26}
+            />
           ),
         }}
       />

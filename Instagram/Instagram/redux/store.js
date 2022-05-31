@@ -1,13 +1,8 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { createStore, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
-import { AuthReducer } from "./Auth/Reducer";
+import { Reducer } from "./Reducer";
 
-const reducer = combineReducers({
-  Auth: AuthReducer,
-});
-
-
-export const store = createStore(reducer,applyMiddleware(thunk));
+export const store = createStore(Reducer, applyMiddleware(thunk));
 
 // store.subscribe(() => {
 //     console.log(store.getState());

@@ -29,7 +29,6 @@ export const Clear_Users = () => helper(CLEAR_USERS, null);
 export const Fetch_Following_User =
   (id, getPosts, Users) => (dispatch, getState) => {
     const found = getState().FollowingData.Users.some((ele) => ele.id === id);
-    // console.log("found", found, getState().FollowingData.Users.length);
     if (!found) {
       const docRef = doc(db, "users", id);
       getDoc(docRef)
@@ -43,14 +42,15 @@ export const Fetch_Following_User =
               Users.push(user);
             }
             dispatch(Add_Following_User(user));
+            if (getPosts) {
+              dispatch(Fetch_Following_User_Posts(id));
+            }
+            // console.log("User added", user,getPosts);
           }
         })
         .catch((err) => {
           console.log(err);
         });
-      if (getPosts) {
-        dispatch(Fetch_Following_User_Posts(id));
-      }
     }
   };
 
@@ -61,6 +61,7 @@ const Fetch_Following_User_Posts = (id) => (dispatch, getState) => {
     const posts = res.docs.map((doc) => {
       return { ...doc.data(), id: doc.id, user };
     });
+
     dispatch(Update_Following_User_Count({ posts, id }));
   });
 };

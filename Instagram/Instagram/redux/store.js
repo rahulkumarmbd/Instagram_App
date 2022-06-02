@@ -10,6 +10,6 @@ const Reducer = combineReducers({
 
 export const store = createStore(Reducer, applyMiddleware(thunk));
 
-// store.subscribe(() => {
-//   console.log("store", store.getState().FollowingData.Users.length);
-// });
+store.subscribe(() => {
+  console.log("store", store.getState().FollowingData.Users);
+});

@@ -22,6 +22,8 @@ export const Feed = () => {
     let allPosts = [...posts];
     if (UsersFollowingCount === followings.length) {
       Users.forEach((user) => {
+        // console.log("user.posts", user?.posts);
+        if (!user.posts) return;
         allPosts = [...allPosts, ...user.posts];
       });
       setDisplayPosts(allPosts.sort((a, b) => b.timestamp - a.timestamp));

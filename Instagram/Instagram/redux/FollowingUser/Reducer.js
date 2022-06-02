@@ -7,7 +7,7 @@ import {
 
 const initialState = {
   Users: [],
-  UsersCount: 0,
+  UsersFollowingCount: 0,
 };
 
 export const FollowingReducer = (state = initialState, { type, payload }) => {
@@ -27,12 +27,12 @@ export const FollowingReducer = (state = initialState, { type, payload }) => {
             return user;
           }),
         ],
-        UsersCount: state.UsersCount + 1,
+        UsersFollowingCount: state.UsersFollowingCount + 1,
       };
     case UPDATE_FOLLOWING_USERS_ON_UNFOLLOW:
       return {
         Users: [...state.Users.filter((user) => user.id !== payload)],
-        UsersCount: state.UsersCount - 1,
+        UsersFollowingCount: state.UsersFollowingCount - 1,
       };
     case CLEAR_USERS:
       return initialState;

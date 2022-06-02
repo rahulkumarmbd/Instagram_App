@@ -57,7 +57,7 @@ export const Fetch_Current_User_Following = (userId) => (dispatch) => {
     });
     dispatch(Add_User_Followings(ids));
     ids.forEach((id) => {
-      dispatch(Fetch_Following_User(id));
+      dispatch(Fetch_Following_User(id,true));
     });
   });
 };

@@ -26,7 +26,7 @@ export const SignUp = () => {
             console.log("success");
           })
           .catch((err) => {
-            console.log("err", err);
+            alert("something went wrong")
           });
       })
       .catch((err) => {

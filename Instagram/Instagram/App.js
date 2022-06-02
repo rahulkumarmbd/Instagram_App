@@ -8,7 +8,7 @@ import { SignUp } from "./components/auth/SignUp";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { app } from "./firebase/config";
-import { db , auth } from "./firebase/config";
+import { db, auth } from "./firebase/config";
 import { Main } from "./components/Main";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./redux/store";
@@ -16,6 +16,7 @@ import "react-native-gesture-handler";
 import { SafeAreaViewHelper } from "./components/utils/SafeAreaViewHelper";
 import { Save } from "./components/Main/Save";
 import { UserProfile } from "./components/Main/UserProfile";
+import { Comments } from "./components/Main/Comments";
 
 // LogBox.ignoreLogs([
 //   "AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. See https://github.com/react-native-async-storage/async-storage",
@@ -38,7 +39,6 @@ export default function App({ navigation }) {
     onAuthStateChanged(
       auth,
       (user) => {
-        // console.log("user",user);
         if (!user) {
           return setStatus({
             lodding: false,
@@ -46,7 +46,6 @@ export default function App({ navigation }) {
           });
         }
         setUserId(user.uid);
-        // console.log("fun",user.uid);
         return setStatus({
           lodding: false,
           loggedIn: true,
@@ -84,8 +83,6 @@ export default function App({ navigation }) {
     );
   }
 
-  console.log("userid", userId);
-
   return (
     <Provider store={store}>
       <NavigationContainer>
@@ -97,6 +94,11 @@ export default function App({ navigation }) {
             navigation={navigation}
           />
           <stack.Screen name="Save" component={Save} navigation={navigation} />
+          <stack.Screen
+            name="Comments"
+            component={Comments}
+            navigation={navigation}
+          />
           <stack.Screen
             name="UserProfile"
             component={UserProfile}

@@ -5,11 +5,11 @@ import { User } from "./User/Reducer";
 
 const Reducer = combineReducers({
   User: User,
-  FollowingData: FollowingReducer
+  FollowingData: FollowingReducer,
 });
 
 export const store = createStore(Reducer, applyMiddleware(thunk));
 
 // store.subscribe(() => {
-//   console.log("store",store.getState().FollowingData);
+//   console.log("store", store.getState().FollowingData.Users.length);
 // });

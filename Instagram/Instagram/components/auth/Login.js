@@ -11,14 +11,14 @@ export const Login = () => {
   const [userCredentials, setUserCredentials] = useState(initialState);
   const auth = getAuth();
 
-  const handleSignUp = () => {
+  const handleLogin = () => {
     const { email, password } = userCredentials;
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
         console.log(res);
       })
       .catch((err) => {
-        console.log(err);
+        alert("Email and password do not match")
       });
   };
 
@@ -40,7 +40,7 @@ export const Login = () => {
         secureTextEntry={true}
         value={userCredentials.password}
       />
-      <Button title="SignUp" onPress={handleSignUp} />
+      <Button title="SignUp" onPress={handleLogin} />
     </View>
   );
 };

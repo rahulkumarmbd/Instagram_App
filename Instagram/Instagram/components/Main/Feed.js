@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import {
   SafeAreaView,
@@ -13,18 +14,19 @@ import { SafeAreaViewHelper } from "../utils/SafeAreaViewHelper";
 export const Feed = () => {
   const [displayPosts, setDisplayPosts] = useState([]);
   const { User, FollowingData } = useSelector((store) => store);
-  const { UsersCount, Users } = FollowingData;
+  const { UsersFollowingCount, Users } = FollowingData;
   const { followings, posts, CurrentUser } = User;
+  const navigation = useNavigation();
 
   useEffect(() => {
     let allPosts = [...posts];
-    if (UsersCount === followings.length) {
+    if (UsersFollowingCount === followings.length) {
       Users.forEach((user) => {
         allPosts = [...allPosts, ...user.posts];
       });
       setDisplayPosts(allPosts.sort((a, b) => b.timestamp - a.timestamp));
     }
-  }, [UsersCount, posts]);
+  }, [UsersFollowingCount, posts]);
 
   return (
     <SafeAreaView style={SafeAreaViewHelper.AndroidSafeArea}>
@@ -35,13 +37,25 @@ export const Feed = () => {
           horizontal={false}
           data={displayPosts}
           renderItem={({ item }) => {
-            console.log(item);
             return (
               <View style={styles.imageContainer}>
-                <Text>
-                  {item.user?.name ? item.user.name : CurrentUser.name}
+                <Text style={styles.margin}>
+                  User: {item.user?.name ? item.user.name : CurrentUser.name}
                 </Text>
+                <Text style={styles.margin}>Caption: {item.caption}</Text>
                 <Image style={styles.image} source={{ uri: item.url }} />
+                <View style={styles.margin}>
+                  <Text
+                    onPress={() =>
+                      navigation.navigate("Comments", {
+                        postId: item.id,
+                        userId: item.user?.id || CurrentUser.id,
+                      })
+                    }
+                  >
+                    View Comments.....
+                  </Text>
+                </View>
               </View>
             );
           }}
@@ -58,5 +72,10 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     aspectRatio: 1,
+  },
+  margin: {
+    marginTop: 8,
+    marginBottom: 8,
+    paddingLeft: 5,
   },
 });

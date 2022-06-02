@@ -26,25 +26,36 @@ export const Update_Following_Users_On_Unfollow = (payload) =>
 
 export const Clear_Users = () => helper(CLEAR_USERS, null);
 
-export const Fetch_Following_User = (uid) => (dispatch, getState) => {
-  const found = getState().FollowingData.Users.some((ele) => ele.id === uid);
-  console.log(found);
-  if (!found) {
-    const docRef = doc(db, "users", uid);
-    getDoc(docRef)
-      .then((res) => {
-        const user = res.data();
-        dispatch(Add_Following_User(user));
-        dispatch(Fetch_Following_User_Posts(user.id));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-};
+export const Fetch_Following_User =
+  (id, getPosts, Users) => (dispatch, getState) => {
+    const found = getState().FollowingData.Users.some((ele) => ele.id === id);
+    // console.log("found", found, getState().FollowingData.Users.length);
+    if (!found) {
+      const docRef = doc(db, "users", id);
+      getDoc(docRef)
+        .then((res) => {
+          const user = res.data();
+          const found = getState().FollowingData.Users.some(
+            (ele) => ele.id === user.id
+          );
+          if (!found) {
+            if (Users) {
+              Users.push(user);
+            }
+            dispatch(Add_Following_User(user));
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      if (getPosts) {
+        dispatch(Fetch_Following_User_Posts(id));
+      }
+    }
+  };
 
-const Fetch_Following_User_Posts = (uid) => (dispatch, getState) => {
-  onSnapshot(collection(db, `posts/${uid}/userPosts`), (res) => {
+const Fetch_Following_User_Posts = (id) => (dispatch, getState) => {
+  onSnapshot(collection(db, `posts/${id}/userPosts`), (res) => {
     const id = res.docs[0].ref.path.split("/")[1];
     const user = getState().FollowingData.Users.find((ele) => ele.id === id);
     const posts = res.docs.map((doc) => {

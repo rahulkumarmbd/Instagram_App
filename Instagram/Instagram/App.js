@@ -5,16 +5,17 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { LandingScreen } from "./components/auth/Landing";
 import { Login } from "./components/auth/Login";
 import { SignUp } from "./components/auth/SignUp";
-import { onAuthStateChanged, getAuth } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { app } from "./firebase/config";
-import { db } from "./firebase/config";
+import { db , auth } from "./firebase/config";
 import { Main } from "./components/Main";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./redux/store";
 import "react-native-gesture-handler";
 import { SafeAreaViewHelper } from "./components/utils/SafeAreaViewHelper";
 import { Save } from "./components/Main/Save";
+import { UserProfile } from "./components/Main/UserProfile";
 
 // LogBox.ignoreLogs([
 //   "AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. See https://github.com/react-native-async-storage/async-storage",
@@ -32,7 +33,6 @@ const initStatus = {
 export default function App({ navigation }) {
   const [{ lodding, loggedIn }, setStatus] = useState(initStatus);
   const [userId, setUserId] = useState();
-  const auth = getAuth();
 
   useEffect(() => {
     onAuthStateChanged(
@@ -97,6 +97,11 @@ export default function App({ navigation }) {
             navigation={navigation}
           />
           <stack.Screen name="Save" component={Save} navigation={navigation} />
+          <stack.Screen
+            name="UserProfile"
+            component={UserProfile}
+            navigation={navigation}
+          />
         </stack.Navigator>
       </NavigationContainer>
     </Provider>

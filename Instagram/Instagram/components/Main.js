@@ -1,25 +1,29 @@
 import { useEffect } from "react";
 import { Text, View, SafeAreaView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { Fetch_Current_User, Fetch_Current_User_Posts } from "../redux/Actions";
+import {
+  Fetch_Current_User,
+  Fetch_Current_User_Following,
+  Fetch_Current_User_Posts,
+} from "../redux/User/Actions";
 import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 import { Feed } from "./Main/Feed";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Add } from "./Main/Add";
 import { Profile } from "./Main/Profile";
 import { SafeAreaViewHelper } from "./utils/SafeAreaViewHelper";
+import { Search } from "./Main/Search";
 
 const Tab = createMaterialBottomTabNavigator();
 
 export const Main = ({ userId }) => {
   const dispatch = useDispatch();
-  const CurrentUser = useSelector((store) => store.CurrentUser);
-
-  // console.log("CurrentUser", CurrentUser);
+  const CurrentUser = useSelector((store) => store.User.CurrentUser);
 
   useEffect(() => {
     dispatch(Fetch_Current_User(userId));
     dispatch(Fetch_Current_User_Posts(userId));
+    dispatch(Fetch_Current_User_Following(userId));
   }, []);
 
   if (!CurrentUser)
@@ -39,6 +43,15 @@ export const Main = ({ userId }) => {
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="magnify" color={color} size={26} />
           ),
         }}
       />

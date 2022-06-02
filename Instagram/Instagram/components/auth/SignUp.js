@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Text, TextInput, View } from "react-native";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import { collection, getDocs, addDoc, setDoc, doc } from "firebase/firestore";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/config";
 
 const initialState = {

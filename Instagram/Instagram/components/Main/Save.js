@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { Text, View, Image, TextInput, Button, StyleSheet } from "react-native";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { db, storage } from "../../firebase/config";
 import "react-native-get-random-values";
 import { v4 as uuid } from "uuid";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { Fetch_Current_User_Posts } from "../../redux/Actions";
 
 export const Save = ({ route, navigation }) => {
   const [caption, setCaption] = useState("");
   const [progress, setProgress] = useState("");
-  const dispatch = useDispatch();
-  const CurrentUser = useSelector((store) => store.CurrentUser);
+  const CurrentUser = useSelector((store) => store.User.CurrentUser);
 
   const image = route.params.image;
 
@@ -75,7 +73,6 @@ export const Save = ({ route, navigation }) => {
     })
       .then((res) => {
         alert("success!");
-        dispatch(Fetch_Current_User_Posts(CurrentUser.id));
         navigation.popToTop();
       })
       .catch((err) => {

@@ -16,7 +16,6 @@ export const Login = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((res) => {
         console.log(res);
-        // setUserCredentials(initialState);
       })
       .catch((err) => {
         console.log(err);

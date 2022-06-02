@@ -1,9 +1,15 @@
-import { createStore, applyMiddleware } from "redux";
+import { createStore, applyMiddleware, combineReducers } from "redux";
 import thunk from "redux-thunk";
-import { Reducer } from "./Reducer";
+import { FollowingReducer } from "./FollowingUser/Reducer";
+import { User } from "./User/Reducer";
+
+const Reducer = combineReducers({
+  User: User,
+  FollowingData: FollowingReducer
+});
 
 export const store = createStore(Reducer, applyMiddleware(thunk));
 
 // store.subscribe(() => {
-//     console.log(store.getState());
-// })
+//   console.log("store",store.getState().FollowingData);
+// });

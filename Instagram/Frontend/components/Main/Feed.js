@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { db } from "../../firebase/config";
 import { v4 as uuid } from "uuid";
 import { SafeAreaViewHelper } from "../utils/SafeAreaViewHelper";
+import Fontisto from "react-native-vector-icons/Fontisto";
 
 export const Feed = () => {
   const [displayPosts, setDisplayPosts] = useState([]);
@@ -54,7 +55,10 @@ export const Feed = () => {
   return (
     <SafeAreaView style={SafeAreaViewHelper.AndroidSafeArea}>
       <View>
-        <Text>Feed</Text>
+        <View style={styles.header}>
+          <Text>Instagram</Text>
+          <Fontisto name="messenger" size={26} onPress={() => navigation.navigate("Messages")}/>
+        </View>
         <FlatList
           numColumns={1}
           horizontal={false}
@@ -120,6 +124,11 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   padding: {
-    marginBottom: 19,
+    marginBottom: 36,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 5,
   },
 });

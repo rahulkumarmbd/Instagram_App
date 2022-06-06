@@ -1,7 +1,8 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDDFo47EbLbAcC2uPWn3T1gaERr4_nYYBo",
@@ -11,12 +12,22 @@ const firebaseConfig = {
   messagingSenderId: "501425004707",
   appId: "1:501425004707:web:4c2a1e56513367d341df16",
   measurementId: "G-RMG3B0VS5F",
+  databaseURL:
+    "https://instagram-dev-f3280-default-rtdb.asia-southeast1.firebasedatabase.app",
 };
 
-export const app = initializeApp(firebaseConfig);
+export let app;
+
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
+}
 
 export const db = getFirestore();
 
 export const storage = getStorage(app);
 
 export const auth = getAuth(app);
+
+export const database = getDatabase(app);

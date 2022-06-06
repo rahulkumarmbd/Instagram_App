@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { signOut } from "firebase/auth";
 import { deleteDoc, doc, setDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -25,6 +26,7 @@ export const Profile = ({ userPosts, user }) => {
   const [userProfileUser, setUserProfileUser] = useState();
   const [status, setStatus] = useState(true);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   useEffect(() => {
     if (userPosts || user) {
@@ -93,6 +95,29 @@ export const Profile = ({ userPosts, user }) => {
         ) : (
           <Text></Text>
         )}
+        {user && CurrentUser.id !== user.id ? (
+          <Button
+            title="Message"
+            onPress={() =>
+              navigation.navigate("Chat", {
+                data: [
+                  {
+                    id: auth.currentUser.uid,
+                    profilePic: "https://placeimg.com/140/140/any",
+                    name: CurrentUser.name,
+                  },
+                  {
+                    id: user.id,
+                    profilePic: "https://placeimg.com/140/140/any",
+                    name: user.name,
+                  },
+                ],
+              })
+            }
+          />
+        ) : (
+          <Text></Text>
+        )}
       </View>
       <View style={styles.button}>
         {!user || CurrentUser.id === user.id ? (
@@ -146,5 +171,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 5,
     marginBottom: 5,
+    flexDirection: "row",
+    justifyContent: "space-evenly",
   },
 });

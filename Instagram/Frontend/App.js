@@ -9,6 +9,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { app } from "./firebase/config";
 import { db, auth } from "./firebase/config";
+import { database } from "./firebase/config";
 import { Main } from "./components/Main";
 import { Provider, useDispatch } from "react-redux";
 import { store } from "./redux/store";
@@ -17,6 +18,8 @@ import { SafeAreaViewHelper } from "./components/utils/SafeAreaViewHelper";
 import { Save } from "./components/Main/Save";
 import { UserProfile } from "./components/Main/UserProfile";
 import { Comments } from "./components/Main/Comments";
+import { Messages } from "./components/Main/Messages";
+import { Chat } from "./components/Main/Chat";
 
 // LogBox.ignoreLogs([
 //   "AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. See https://github.com/react-native-async-storage/async-storage",
@@ -104,6 +107,12 @@ export default function App({ navigation }) {
             component={UserProfile}
             navigation={navigation}
           />
+          <stack.Screen
+            name="Messages"
+            component={Messages}
+            navigation={navigation}
+          />
+          <stack.Screen name="Chat" component={Chat} />
         </stack.Navigator>
       </NavigationContainer>
     </Provider>

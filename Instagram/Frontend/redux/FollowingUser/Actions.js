@@ -60,7 +60,7 @@ export const Fetch_Following_User =
 
 const Fetch_Following_User_Posts = (id) => (dispatch, getState) => {
   onSnapshot(collection(db, `posts/${id}/userPosts`), (res) => {
-    const id = res.docs[0].ref.path.split("/")[1];
+    const id = res.docs[0]?.ref.path.split("/")[1] || res._snapshot.query.path.segments[1];
     const user = getState().FollowingData.Users.find((ele) => ele.id === id);
     const posts = res.docs.map((doc) => {
       return { ...doc.data(), id: doc.id, user };

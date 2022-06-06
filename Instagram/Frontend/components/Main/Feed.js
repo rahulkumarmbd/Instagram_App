@@ -9,12 +9,15 @@ import {
   Image,
   StyleSheet,
   Button,
+  ScrollView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { db } from "../../firebase/config";
 import { v4 as uuid } from "uuid";
 import { SafeAreaViewHelper } from "../utils/SafeAreaViewHelper";
 import Fontisto from "react-native-vector-icons/Fontisto";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { InstaStories } from "./Stories";
 
 export const Feed = () => {
   const [displayPosts, setDisplayPosts] = useState([]);
@@ -22,8 +25,6 @@ export const Feed = () => {
   const { UsersFollowingCount, Feeds } = FollowingData;
   const { followings, posts, CurrentUser } = User;
   const navigation = useNavigation();
-
-  // console.log(displayPosts);
 
   useEffect(() => {
     if (
@@ -57,53 +58,64 @@ export const Feed = () => {
       <View>
         <View style={styles.header}>
           <Text>Instagram</Text>
-          <Fontisto name="messenger" size={26} onPress={() => navigation.navigate("Messages")}/>
+          <View style={styles.icons}>
+            <AntDesign
+              name="pluscircle"
+              size={26}
+              style={{ marginRight: 8 }}
+              onPress={() => navigation.navigate("AddStories")}
+            />
+            <Fontisto
+              name="messenger"
+              size={26}
+              onPress={() => navigation.navigate("Messages")}
+            />
+          </View>
         </View>
-        <FlatList
-          numColumns={1}
-          horizontal={false}
-          data={displayPosts}
-          style={styles.padding}
-          renderItem={({ item }) => {
-            return (
-              <View style={styles.imageContainer}>
-                <Text style={styles.margin}>
-                  User: {item.user?.name ? item.user.name : CurrentUser.name}
-                </Text>
-                <Text style={styles.margin}>Caption: {item.caption}</Text>
-                <Image style={styles.image} source={{ uri: item.url }} />
-                <View style={styles.margin}>
-                  {item?.CurrentUserLike ? (
-                    <Button
-                      title={`dislike : ${0}`}
-                      onPress={() =>
-                        removeLike(item.id, item.user?.id || CurrentUser.id)
-                      }
-                    />
-                  ) : (
-                    <Button
-                      title={`Like : ${0}`}
-                      onPress={() =>
-                        addLike(item.id, item.user?.id || CurrentUser.id)
-                      }
-                    />
-                  )}
-                  <Text
-                    style={{ paddingTop: 10 }}
-                    onPress={() =>
-                      navigation.navigate("Comments", {
-                        postId: item.id,
-                        userId: item.user?.id || CurrentUser.id,
-                      })
-                    }
-                  >
-                    View Comments.....
+        <ScrollView horizontal={false}>
+          <View>
+            <InstaStories />
+            {displayPosts.map((item) => {
+              return (
+                <View style={styles.imageContainer} key={item.id}>
+                  <Text style={styles.margin}>
+                    User: {item.user?.name ? item.user.name : CurrentUser.name}
                   </Text>
+                  <Text style={styles.margin}>Caption: {item.caption}</Text>
+                  <Image style={styles.image} source={{ uri: item.url }} />
+                  <View style={styles.margin}>
+                    {item?.CurrentUserLike ? (
+                      <Button
+                        title={`dislike : ${0}`}
+                        onPress={() =>
+                          removeLike(item.id, item.user?.id || CurrentUser.id)
+                        }
+                      />
+                    ) : (
+                      <Button
+                        title={`Like : ${0}`}
+                        onPress={() =>
+                          addLike(item.id, item.user?.id || CurrentUser.id)
+                        }
+                      />
+                    )}
+                    <Text
+                      style={{ paddingTop: 10 }}
+                      onPress={() =>
+                        navigation.navigate("Comments", {
+                          postId: item.id,
+                          userId: item.user?.id || CurrentUser.id,
+                        })
+                      }
+                    >
+                      View Comments.....
+                    </Text>
+                  </View>
                 </View>
-              </View>
-            );
-          }}
-        />
+              );
+            })}
+          </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -129,6 +141,10 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
-    padding: 5,
+    paddingHorizontal: 5,
+    paddingVertical: 10,
+  },
+  icons: {
+    flexDirection: "row",
   },
 });

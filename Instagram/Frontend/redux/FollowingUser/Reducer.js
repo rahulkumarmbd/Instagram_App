@@ -1,15 +1,18 @@
 import {
   ADD_FOLLOWING_USER_DATA,
+  ADD_FOLLOWING_USER_STORIES,
   CLEAR_USERS,
   CURRENT_USER_POST_LIKES,
   UPDATE_FOLLOWING_USERS_COUNT,
   UPDATE_FOLLOWING_USERS_ON_UNFOLLOW,
+  UPDATE_FOLLOWING_USER_STORIES,
 } from "./ActionTypes";
 
 const initialState = {
   Users: [],
   Feeds: [],
   UsersFollowingCount: -1,
+  Stories: [],
 };
 
 export const FollowingReducer = (state = initialState, { type, payload }) => {
@@ -45,6 +48,20 @@ export const FollowingReducer = (state = initialState, { type, payload }) => {
       };
     case CLEAR_USERS:
       return initialState;
+    case ADD_FOLLOWING_USER_STORIES:
+      return { ...state, Stories: [...state.Stories, payload] };
+    case UPDATE_FOLLOWING_USER_STORIES:
+      return {
+        ...state,
+        Stories: [
+          ...state.Stories.map((story) => {
+            if (story.id === payload.id) {
+              return payload;
+            }
+            return story;
+          }),
+        ],
+      };
     default:
       return state;
   }

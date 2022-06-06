@@ -4,7 +4,7 @@ import { Camera, CameraType } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import { useIsFocused } from "@react-navigation/native";
 
-export const Add = ({ navigation }) => {
+export const UploadProfilePicture = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [camera, setCamera] = useState(null);
   const [image, setImage] = useState(null);
@@ -87,7 +87,7 @@ export const Add = ({ navigation }) => {
           style={styles.button}
           title={"Save Image"}
           onPress={() => {
-            navigation.navigate("Save", { image, type: "Post" });
+            navigation.navigate("Save", { image, type: "ProfilePicture" });
           }}
         ></Button>
       )}

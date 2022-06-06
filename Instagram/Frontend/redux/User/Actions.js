@@ -7,7 +7,10 @@ import {
   query,
 } from "firebase/firestore";
 import { db } from "../../firebase/config";
-import { Fetch_Following_User } from "../FollowingUser/Actions";
+import {
+  Fetch_Following_User,
+  Fetch_Following_User_Stories,
+} from "../FollowingUser/Actions";
 import {
   ADD_POSTS,
   ADD_USER_FOLLOWINGS,
@@ -58,6 +61,7 @@ export const Fetch_Current_User_Following = (userId) => (dispatch) => {
     dispatch(Add_User_Followings(ids));
     [...ids, userId].forEach((id) => {
       dispatch(Fetch_Following_User(id, true));
+      dispatch(Fetch_Following_User_Stories(id));
     });
   });
 };

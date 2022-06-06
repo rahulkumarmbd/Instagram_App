@@ -8,10 +8,12 @@ import {
 import { auth, db } from "../../firebase/config";
 import {
   ADD_FOLLOWING_USER_DATA,
+  ADD_FOLLOWING_USER_STORIES,
   CLEAR_USERS,
   CURRENT_USER_POST_LIKES,
   UPDATE_FOLLOWING_USERS_COUNT,
   UPDATE_FOLLOWING_USERS_ON_UNFOLLOW,
+  UPDATE_FOLLOWING_USER_STORIES,
 } from "./ActionTypes";
 
 const helper = (type, payload) => ({ type, payload });
@@ -29,6 +31,12 @@ export const Clear_Users = () => helper(CLEAR_USERS, null);
 
 const Current_User_Post_Liskes = (payload) =>
   helper(CURRENT_USER_POST_LIKES, payload);
+
+const Add_Following_User_Stories = (payload) =>
+  helper(ADD_FOLLOWING_USER_STORIES, payload);
+
+const Update_Following_User_Stories = (payload) =>
+  helper(UPDATE_FOLLOWING_USER_STORIES, payload);
 
 export const Fetch_Following_User =
   (id, getPosts, Users) => (dispatch, getState) => {
@@ -60,7 +68,9 @@ export const Fetch_Following_User =
 
 const Fetch_Following_User_Posts = (id) => (dispatch, getState) => {
   onSnapshot(collection(db, `posts/${id}/userPosts`), (res) => {
-    const id = res.docs[0]?.ref.path.split("/")[1] || res._snapshot.query.path.segments[1];
+    const id =
+      res.docs[0]?.ref.path.split("/")[1] ||
+      res._snapshot.query.path.segments[1];
     const user = getState().FollowingData.Users.find((ele) => ele.id === id);
     const posts = res.docs.map((doc) => {
       return { ...doc.data(), id: doc.id, user };
@@ -74,20 +84,39 @@ const Fetch_Following_User_Posts = (id) => (dispatch, getState) => {
   });
 };
 
-const Fetch_Following_User_Post_Likes =
-  (userId, postId) => (dispatch) => {
-    onSnapshot(
-      doc(
-        db,
-        `posts/${userId}/userPosts/${postId}/likes/${auth.currentUser.uid}`
-      ),
-      (res) => {
-        const postId = res.ref._key.path.segments[3];
-        let CurrentUserLike = false;
-        if (res.exists()) {
-          CurrentUserLike = true;
-        }
-        dispatch(Current_User_Post_Liskes({ postId, CurrentUserLike }));
+const Fetch_Following_User_Post_Likes = (userId, postId) => (dispatch) => {
+  onSnapshot(
+    doc(
+      db,
+      `posts/${userId}/userPosts/${postId}/likes/${auth.currentUser.uid}`
+    ),
+    (res) => {
+      const postId = res.ref._key.path.segments[3];
+      let CurrentUserLike = false;
+      if (res.exists()) {
+        CurrentUserLike = true;
       }
+      dispatch(Current_User_Post_Liskes({ postId, CurrentUserLike }));
+    }
+  );
+};
+
+export const Fetch_Following_User_Stories = (id) => (dispatch, getState) => {
+  onSnapshot(collection(db, `stories/${id}/userStories`), (res) => {
+    const id =
+      res.docs[0]?.ref.path.split("/")[1] ||
+      res._snapshot.query.path.segments[1];
+    const stories = res.docs.map((doc) => {
+      return doc.data();
+    });
+    const userStory = getState().FollowingData.Stories.find(
+      (ele) => ele.id === id
     );
-  };
+
+    if (!userStory && stories.length > 0) {
+      dispatch(Add_Following_User_Stories({ id, stories }));
+    } else if (stories.length > 0) {
+      dispatch(Update_Following_User_Stories({ id, stories }));
+    }
+  });
+};

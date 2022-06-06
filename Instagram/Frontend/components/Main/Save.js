@@ -2,34 +2,34 @@ import { useState } from "react";
 import { Text, View, Image, TextInput, Button, StyleSheet } from "react-native";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { useSelector } from "react-redux";
-import { db, storage } from "../../firebase/config";
+import { auth, db, storage } from "../../firebase/config";
 import "react-native-get-random-values";
 import { v4 as uuid } from "uuid";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 
 export const Save = ({ route, navigation }) => {
   const [caption, setCaption] = useState("");
   const [progress, setProgress] = useState("");
   const CurrentUser = useSelector((store) => store.User.CurrentUser);
 
-  const image = route.params.image;
+  const { image, type } = route.params;
 
   const uploadImage = async () => {
     if (!image) return;
 
     const response = await fetch(image);
     const blob = await response.blob();
-    const imageRef = ref(storage, `posts/${uuid()}`);
+    const imageRef =
+      type === "Post"
+        ? ref(storage, `posts/${uuid()}`)
+        : type === "ProfilePicture"
+        ? ref(storage, `users/${auth.currentUser.uid}`)
+        : ref(storage, `stories/${auth.currentUser.uid}`);
     // uploadBytes(imageRef, blob).then(() => {
     //   alert("Image uploaded successfully");
     // });
 
     const uploadTask = uploadBytesResumable(imageRef, blob);
-
-    // Register three observers:
-    // 1. 'state_changed' observer, called any time the state changes
-    // 2. Error observer, called on failure
-    // 3. Completion observer, called on successful completion
 
     const progressFun = (snapshot) => {
       // Observe state change events such as progress, pause, and resume
@@ -56,11 +56,31 @@ export const Save = ({ route, navigation }) => {
       // For instance, get the download URL: https://firebasestorage.googleapis.com/...
       getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
         console.log("File available at", downloadURL);
-        uploadPost(downloadURL);
+        type === "Post"
+          ? uploadPost(downloadURL)
+          : type === "ProfilePicture"
+          ? uploadProfilePicture(downloadURL)
+          : uploadStory(downloadURL);
       });
     };
 
     uploadTask.on("state_changed", progressFun, errorFun, successFun);
+  };
+
+  const uploadStory = (downloadURL) => {
+    const id = uuid();
+    setDoc(doc(db, "stories", CurrentUser.id, "userStories", id), {
+      story_id: id,
+      timestamp: new Date().toISOString(),
+      story_image: downloadURL,
+    })
+      .then((res) => {
+        alert("success!");
+        navigation.goBack();
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
   };
 
   const uploadPost = (downloadURL) => {
@@ -74,6 +94,19 @@ export const Save = ({ route, navigation }) => {
       .then((res) => {
         alert("success!");
         navigation.popToTop();
+      })
+      .catch((err) => {
+        console.log("err", err);
+      });
+  };
+
+  const uploadProfilePicture = (downloadURL) => {
+    updateDoc(doc(db, "users", auth.currentUser.uid), {
+      profilePic: downloadURL,
+    })
+      .then((res) => {
+        alert("success!");
+        navigation.goBack();
       })
       .catch((err) => {
         console.log("err", err);

@@ -19,23 +19,33 @@ import {
 } from "../../redux/FollowingUser/Actions";
 import { Clear_User } from "../../redux/User/Actions";
 import { SafeAreaViewHelper } from "../utils/SafeAreaViewHelper";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 export const Profile = ({ userPosts, user }) => {
   const { CurrentUser, posts, followings } = useSelector((store) => store.User);
   const [userProfilePosts, setUserProfilePosts] = useState();
   const [userProfileUser, setUserProfileUser] = useState();
+  const [profilePic, setProfilePic] = useState(
+    "https://chingizpro.github.io/portfolio/img/person.png"
+  );
   const [status, setStatus] = useState(true);
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
   useEffect(() => {
-    if (userPosts || user) {
+    if (user) {
       setUserProfilePosts(userPosts);
       setUserProfileUser(user);
+      if (user.profilePic) {
+        setProfilePic(user.profilePic);
+      }
       return;
     }
     setUserProfilePosts(posts);
     setUserProfileUser(CurrentUser);
+    if (CurrentUser.profilePic) {
+      setProfilePic(CurrentUser.profilePic);
+    }
   }, [userPosts, posts]);
 
   useEffect(() => {
@@ -82,6 +92,23 @@ export const Profile = ({ userPosts, user }) => {
   return (
     <SafeAreaView style={SafeAreaViewHelper.AndroidSafeArea}>
       <View style={styles.profileContainer}>
+        <View>
+          <View style={styles.ProfileImageContainer}>
+            <Image
+              style={styles.ProfileImage}
+              source={{
+                uri: profilePic,
+              }}
+            />
+          </View>
+          <View style={styles.ProfileImageUploadIcon}>
+            <MaterialCommunityIcons
+              name="camera"
+              size={28}
+              onPress={() => navigation.navigate("UploadProfilePicture")}
+            />
+          </View>
+        </View>
         <Text>Name: {userProfileUser?.name}</Text>
         <Text>email: {userProfileUser?.email}</Text>
       </View>
@@ -148,11 +175,9 @@ export const Profile = ({ userPosts, user }) => {
 const styles = StyleSheet.create({
   profileContainer: {
     marginTop: 20,
-    marginBottom: 20,
     marginLeft: 5,
     marginRight: 5,
     alignItems: "center",
-    borderWidth: 2,
     padding: 8,
   },
   postsHeading: {
@@ -173,5 +198,20 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     flexDirection: "row",
     justifyContent: "space-evenly",
+  },
+  ProfileImageContainer: {
+    height: 75,
+    width: 75,
+    margin: 10,
+    borderRadius: 37.5,
+    overflow: "hidden",
+  },
+  ProfileImage: {
+    aspectRatio: 1,
+  },
+  ProfileImageUploadIcon: {
+    position: "absolute",
+    right: 2,
+    bottom: 2,
   },
 });

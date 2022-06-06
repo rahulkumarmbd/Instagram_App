@@ -21,12 +21,16 @@ export const SignUp = () => {
     const { email, password } = userCredentials;
     createUserWithEmailAndPassword(auth, email, password)
       .then(({ user }) => {
-        setDoc(doc(db, "users", user.uid), { ...userCredentials, id: user.uid })
+        setDoc(doc(db, "users", user.uid), {
+          ...userCredentials,
+          id: user.uid,
+          profilePic: "https://chingizpro.github.io/portfolio/img/person.png",
+        })
           .then((res) => {
             console.log("success");
           })
           .catch((err) => {
-            alert("something went wrong")
+            alert("something went wrong");
           });
       })
       .catch((err) => {

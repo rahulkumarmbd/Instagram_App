@@ -20,6 +20,8 @@ import { UserProfile } from "./components/Main/UserProfile";
 import { Comments } from "./components/Main/Comments";
 import { Messages } from "./components/Main/Messages";
 import { Chat } from "./components/Main/Chat";
+import { UploadProfilePicture } from "./components/Main/UploadProfilePicture";
+import { AddStories } from "./components/Main/AddStories";
 
 // LogBox.ignoreLogs([
 //   "AsyncStorage has been extracted from react-native core and will be removed in a future release. It can now be installed and imported from '@react-native-async-storage/async-storage' instead of 'react-native'. See https://github.com/react-native-async-storage/async-storage",
@@ -113,6 +115,8 @@ export default function App({ navigation }) {
             navigation={navigation}
           />
           <stack.Screen name="Chat" component={Chat} />
+          <stack.Screen name="UploadProfilePicture" component={UploadProfilePicture} navigation={navigation}/>
+          <stack.Screen name="AddStories" component={AddStories} navigation={navigation}/>
         </stack.Navigator>
       </NavigationContainer>
     </Provider>

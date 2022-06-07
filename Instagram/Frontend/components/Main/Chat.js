@@ -3,14 +3,7 @@ import { View } from "react-native";
 import { Bubble, GiftedChat, Send } from "react-native-gifted-chat";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import {
-  set,
-  ref,
-  getDatabase,
-  get,
-  push,
-  onValue,
-} from "firebase/database";
+import { set, ref, getDatabase, get, push, onValue } from "firebase/database";
 import { v4 as uuid } from "uuid";
 import { auth } from "../../firebase/config";
 import { useSelector } from "react-redux";
@@ -116,7 +109,7 @@ export const Chat = ({ route }) => {
     (messages = []) => {
       if (!messages.length) return;
       messages[0].user.name = CurrentUser.name;
-      messages[0].user.avatar = "https://placeimg.com/140/140/any";
+      messages[0].user.avatar = CurrentUser.profilePic;
       messages[0].timestamp = new Date().toISOString();
 
       set(

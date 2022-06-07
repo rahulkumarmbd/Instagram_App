@@ -24,7 +24,7 @@ export const Main = () => {
   useEffect(() => {
     dispatch(Fetch_Current_User(userId));
     dispatch(Fetch_Current_User_Posts(userId));
-    dispatch(Fetch_Current_User_Following(userId));
+    dispatch(Fetch_Current_User_Following());
   }, []);
 
   if (!userId)

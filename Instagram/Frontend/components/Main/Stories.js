@@ -7,22 +7,24 @@ export const InstaStories = () => {
   const { Stories, Users } = useSelector((store) => store.FollowingData);
   const [data, setData] = useState([]);
 
+  // console.log("stories loaded", Stories);
+
   useEffect(() => {
     let newStories = [];
     Stories.forEach((story) => {
       const user = Users.find((ele) => ele.id === story.id);
+      if(!user) return;
+
       newStories.push({
         user_id: story.id,
-        user_image: user.profilePic,
+        user_image: user?.profilePic,
         user_name: user.name,
         stories: story.stories,
       });
     });
-    if (!newStories.length) return;
+
     setData(newStories);
   }, [Stories]);
-
-  console.log("data", data);
 
   return (
     <InstaStory

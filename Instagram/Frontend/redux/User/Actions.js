@@ -2,11 +2,12 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
 } from "firebase/firestore";
-import { db } from "../../firebase/config";
+import { auth, db } from "../../firebase/config";
 import {
   Fetch_Following_User,
   Fetch_Following_User_Stories,
@@ -27,8 +28,8 @@ export const Add_User_Followings = (payload) =>
 
 export const Clear_User = () => helper(CLEAR_USER, null);
 
-export const Fetch_Current_User = (userId) => (dispatch) => {
-  const docRef = doc(db, "users", userId);
+export const Fetch_Current_User = () => (dispatch) => {
+  const docRef = doc(db, "users", auth.currentUser.uid);
   getDoc(docRef)
     .then((res) => {
       dispatch(Add_User(res.data()));
@@ -53,15 +54,19 @@ export const Fetch_Current_User_Posts = (userId) => (dispatch) => {
   );
 };
 
-export const Fetch_Current_User_Following = (userId) => (dispatch) => {
-  onSnapshot(collection(db, `following/${userId}/userFollowing`), (res) => {
-    const ids = res.docs.map((doc) => {
-      return doc.id;
-    });
-    dispatch(Add_User_Followings(ids));
-    [...ids, userId].forEach((id) => {
-      dispatch(Fetch_Following_User(id, true));
-      dispatch(Fetch_Following_User_Stories(id));
-    });
-  });
+export const Fetch_Current_User_Following = () => (dispatch) => {
+  console.log("hey");
+  onSnapshot(
+    collection(db, `following/${auth.currentUser.uid}/userFollowing`),
+    (res) => {
+      const ids = res.docs.map((doc) => {
+        return doc.id;
+      });
+      console.log("ids", ids);
+      dispatch(Add_User_Followings(ids));
+      [...ids, auth.currentUser.uid].forEach((id) => {
+        dispatch(Fetch_Following_User(id, true));
+      });
+    }
+  );
 };

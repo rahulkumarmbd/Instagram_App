@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { Text, View, Image, TextInput, Button, StyleSheet } from "react-native";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { auth, db, storage } from "../../firebase/config";
 import "react-native-get-random-values";
 import { v4 as uuid } from "uuid";
-import { doc, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { Fetch_Current_User } from "../../redux/User/Actions";
 
 export const Save = ({ route, navigation }) => {
   const [caption, setCaption] = useState("");
   const [progress, setProgress] = useState("");
   const CurrentUser = useSelector((store) => store.User.CurrentUser);
+  const dispatch = useDispatch();
 
   const { image, type } = route.params;
 
@@ -73,6 +75,7 @@ export const Save = ({ route, navigation }) => {
       story_id: id,
       timestamp: new Date().toISOString(),
       story_image: downloadURL,
+      userId: CurrentUser.id,
     })
       .then((res) => {
         alert("success!");
@@ -87,7 +90,7 @@ export const Save = ({ route, navigation }) => {
     const id = uuid();
     setDoc(doc(db, "posts", CurrentUser.id, "userPosts", id), {
       id,
-      timestamp: serverTimestamp(),
+      timestamp: new Date(),
       url: downloadURL,
       caption,
     })
@@ -106,6 +109,7 @@ export const Save = ({ route, navigation }) => {
     })
       .then((res) => {
         alert("success!");
+        dispatch(Fetch_Current_User());
         navigation.goBack();
       })
       .catch((err) => {
@@ -116,10 +120,12 @@ export const Save = ({ route, navigation }) => {
   return (
     <View>
       <Text>Save Screen</Text>
-      <TextInput
-        placeholder="Enter a Caption"
-        onChangeText={(text) => setCaption(text)}
-      />
+      {type === "Post" ? (
+        <TextInput
+          placeholder="Enter a Caption"
+          onChangeText={(text) => setCaption(text)}
+        />
+      ) : null}
       <Image source={{ uri: image }} style={styles.logo} />
       <Button onPress={() => uploadImage()} title="Upload" />
       <View style={styles.processBar}>

@@ -4,7 +4,6 @@ import {
   onSnapshot,
   orderBy,
   query,
-  serverTimestamp,
   setDoc,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -85,7 +84,7 @@ export const Comments = ({ route }) => {
     setDoc(doc(db, "posts", userId, "userPosts", postId, "comments", id), {
       id,
       creator: CurrentUser.id,
-      timestamp: serverTimestamp(),
+      timestamp: new Date(),
       comment: newComment,
     })
       .then((res) => {

@@ -17,7 +17,10 @@ import {
   Clear_Users,
   Update_Following_Users_On_Unfollow,
 } from "../../redux/FollowingUser/Actions";
-import { Clear_User } from "../../redux/User/Actions";
+import {
+  Clear_User,
+  Fetch_Current_User_Following,
+} from "../../redux/User/Actions";
 import { SafeAreaViewHelper } from "../utils/SafeAreaViewHelper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
@@ -46,7 +49,7 @@ export const Profile = ({ userPosts, user }) => {
     if (CurrentUser.profilePic) {
       setProfilePic(CurrentUser.profilePic);
     }
-  }, [userPosts, posts]);
+  }, [userPosts, posts, CurrentUser]);
 
   useEffect(() => {
     if (followings.indexOf(user?.id) > -1) {
@@ -72,6 +75,7 @@ export const Profile = ({ userPosts, user }) => {
     setDoc(doc(db, "following", CurrentUser.id, "userFollowing", user.id), {})
       .then((res) => {
         console.log("follow");
+        dispatch(Fetch_Current_User_Following());
       })
       .catch((err) => {
         console.log("err", err);
@@ -130,12 +134,12 @@ export const Profile = ({ userPosts, user }) => {
                 data: [
                   {
                     id: auth.currentUser.uid,
-                    profilePic: "https://placeimg.com/140/140/any",
+                    profilePic: CurrentUser.profilePic,
                     name: CurrentUser.name,
                   },
                   {
                     id: user.id,
-                    profilePic: "https://placeimg.com/140/140/any",
+                    profilePic: user.profilePic,
                     name: user.name,
                   },
                 ],

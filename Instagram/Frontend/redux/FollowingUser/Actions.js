@@ -56,6 +56,7 @@ export const Fetch_Following_User =
             dispatch(Add_Following_User(user));
             if (getPosts) {
               dispatch(Fetch_Following_User_Posts(id));
+              dispatch(Fetch_Following_User_Stories(id));
             }
             // console.log("User added", user,getPosts);
           }
@@ -72,15 +73,22 @@ const Fetch_Following_User_Posts = (id) => (dispatch, getState) => {
       res.docs[0]?.ref.path.split("/")[1] ||
       res._snapshot.query.path.segments[1];
     const user = getState().FollowingData.Users.find((ele) => ele.id === id);
-    const posts = res.docs.map((doc) => {
+    let posts = res.docs.map((doc) => {
       return { ...doc.data(), id: doc.id, user };
+    });
+
+    posts = posts.filter((post) => {
+      if (getState().FollowingData.Feeds.find((ele) => ele.id === post.id)) {
+        return false;
+      }
+      return true;
     });
 
     posts.forEach((post) => {
       dispatch(Fetch_Following_User_Post_Likes(id, post.id));
     });
 
-    dispatch(Update_Following_User_Count(posts));
+    dispatch(Update_Following_User_Count({ id, posts }));
   });
 };
 

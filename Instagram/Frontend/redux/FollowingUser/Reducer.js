@@ -1,3 +1,4 @@
+import { auth } from "../../firebase/config";
 import {
   ADD_FOLLOWING_USER_DATA,
   ADD_FOLLOWING_USER_STORIES,
@@ -11,8 +12,24 @@ import {
 const initialState = {
   Users: [],
   Feeds: [],
-  UsersFollowingCount: -1,
+  UsersFollowingCount: 0,
   Stories: [],
+};
+
+let a = [];
+
+const getCount = (userId, prevValue) => {
+  if (a.includes(userId) || auth.currentUser.uid === userId) {
+    return prevValue;
+  } else {
+    a.push(userId);
+    return prevValue + 1;
+  }
+};
+
+const removeCount = (userId, prevValue) => {
+  a = a.filter((ele) => ele !== userId);
+  return prevValue - 1;
 };
 
 export const FollowingReducer = (state = initialState, { type, payload }) => {
@@ -25,14 +42,23 @@ export const FollowingReducer = (state = initialState, { type, payload }) => {
     case UPDATE_FOLLOWING_USERS_COUNT:
       return {
         ...state,
-        Feeds: [...state.Feeds, ...payload],
-        UsersFollowingCount: state.UsersFollowingCount + 1,
+        Feeds: [...state.Feeds, ...payload.posts],
+        UsersFollowingCount: getCount(payload.id, state.UsersFollowingCount),
       };
     case UPDATE_FOLLOWING_USERS_ON_UNFOLLOW:
       return {
-        ...state,
-        Feeds: [...state.Feeds.filter((feed) => feed.id !== payload)],
-        UsersFollowingCount: state.UsersFollowingCount - 1,
+        Stories: [
+          ...state.Stories.filter((story) => {
+            return story.id !== payload;
+          }),
+        ],
+        Users: [
+          ...state.Users.filter((user) => {
+            return user.id !== payload;
+          }),
+        ],
+        Feeds: [...state.Feeds.filter((feed) => feed.user.id !== payload)],
+        UsersFollowingCount: removeCount(payload, state.UsersFollowingCount),
       };
     case CURRENT_USER_POST_LIKES:
       return {

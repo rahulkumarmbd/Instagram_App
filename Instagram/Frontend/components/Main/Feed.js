@@ -27,6 +27,7 @@ export const Feed = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
+    console.log("Feeds", UsersFollowingCount, followings.length);
     if (
       UsersFollowingCount === followings.length &&
       !Feeds.some((ele) => ele.CurrentUserLike === undefined)
@@ -72,7 +73,7 @@ export const Feed = () => {
             />
           </View>
         </View>
-        <ScrollView horizontal={false}>
+        <ScrollView style={styles.padding} horizontal={false}>
           <View>
             <InstaStories />
             {displayPosts.map((item) => {
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   padding: {
-    marginBottom: 36,
+    marginBottom: 45,
   },
   header: {
     flexDirection: "row",

@@ -40,7 +40,7 @@ export const Login = () => {
         secureTextEntry={true}
         value={userCredentials.password}
       />
-      <Button title="SignUp" onPress={handleLogin} />
+      <Button title="Login" onPress={handleLogin} />
     </View>
   );
 };
